@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "cstdlib": "c",
+        "commande.h": "c",
+        "string.h": "c"
+    }
+}

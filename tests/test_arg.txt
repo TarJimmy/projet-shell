@@ -1,0 +1,4 @@
+#
+# test_arg essaie une commande avec arguments
+#
+ls -la .
