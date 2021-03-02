@@ -83,13 +83,6 @@ void Execve(const char *filename, char *const argv[], char *const envp[])
 	unix_error("Execve error");
 }
 
-/* $end forkwrapper */
-void Execvp(const char *filename, char *const argv[]) 
-{
-    if (execvp(filename, argv) < 0)
-	unix_error("Execvp error");
-}
-
 /* $begin wait */
 pid_t Wait(int *status) 
 {

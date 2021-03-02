@@ -13,15 +13,13 @@
 /**
  * Mode Debug  : make DEBUG=0
  * Mode normal : make 
-*/ 
-int main()
-{
+*/
+int main() {
 	#ifdef DEBUG
 	printf("-----MODE DEBUG-----\n");
 	#endif
 	while (1) {
 		struct cmdline *l;
-		int resultat;
 
 		printf("shell> ");
 		l = readcmd();
@@ -38,7 +36,7 @@ int main()
 			#endif
 			continue;
 		}
-		
+
 		/* User wants quit shell : command "quit" */
 		if (strcmp(*l->seq[0], CHAR_STOP_SHELL) == 0) {
 			// besoin de free la structure ?
@@ -47,11 +45,7 @@ int main()
 		}
 
 		/* Exécute la commande (simple pour l’instant) */
-		resultat = executeCmd(l);
-
-		if (resultat != EXIT_SUCCESS) {
-			printf("Erreur d’exécution de la commande\n");
-		}
+		executeCmd(l);
 		
 		/* [DEBUG] Display in < and out > arguments and Display each command of the pipe */
 		#ifdef DEBUG

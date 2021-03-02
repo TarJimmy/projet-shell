@@ -4,10 +4,7 @@
 #include "readcmd.h"
 #include "csapp.h"
 
-#define ERREUR_INDICE 1
-#define ERREUR_EXEC 2
-
-
+#define ERR_COMMANDE -1
 /*
 * Entrée : une commande sous la forme struct cmdline*
 * Sortie : void
@@ -30,10 +27,10 @@ int tailleCmd(struct cmdline *l);
 
 /*
 * Entrée : un groupe de commandes sous la forme struct cmdline*
-* Sortie : OK_EXEC si les commandes se sont correctement exécutées, ERREUR_INDICE si l->seq est vide, ERREUR_EXEC sinon (à améliorer)
-* Effet de bord : exécute les commandes
+* Sortie :  
+* Effet de bord : exécute les commandes, écrit l'erreur s'il y en a une
 */
-int executeCmd(struct cmdline *l);
+void executeCmd(struct cmdline *l);
 
 /*
 * Entrée : un groupe de commandes sous la forme struct cmdline*, un entier
