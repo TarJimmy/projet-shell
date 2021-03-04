@@ -9,6 +9,8 @@
 #         zombi
 #     Erreurs
 #         erreurs
+#         ecriture_impossible
+#         lecture_impossible
 #     Redirections
 #         redirection_in
 #         redirection_out
@@ -18,8 +20,6 @@
 # Tests échoués :
 #     Erreurs
 #         commande_inconnue affiche (null) au lieu d’afficher le nom de la commande qui a échoué
-#         ecriture_impossible deux shells semblent se lancer après l’erreur
-#         lecture_impossible idem que ecriture_impossible
 
 
 # Tests pas encore essayés :
