@@ -148,10 +148,10 @@ void executeOneCmd(struct cmdline *l, char** cmd, char* in, char* out) {
         
         #ifdef DEBUG
         printf("Wait Pid dans executeCmdOne : %d\n", pid_fils);
+        printf("Return father");
         #endif
         // le père attend la fin du fils qui exécute la commande
         Waitpid(-1, &status, 0);
-        printf("Return father");
         // code renvoyé dépend du code de terminaison du fils
         if (WIFEXITED(status)) {
             return;
