@@ -1,0 +1,9 @@
+#
+# Lance plusieurs commandes, puis affiche les processus courants
+# Résultat attendu : toutes les commandes lancées se sont terminées, et donc n'apparaissent pas dans la liste des processus
+#
+ls
+echo
+ls
+echo
+ps

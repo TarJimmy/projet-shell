@@ -1,0 +1,5 @@
+#
+# Essaie une commande avec arguments
+# Résultat attendu : la commande s'exécute normalement
+#
+ls -la .

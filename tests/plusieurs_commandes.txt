@@ -1,0 +1,6 @@
+#
+# Lance une succession de commandes simples
+#
+ls
+echo Bonjour
+ls

@@ -1,0 +1,5 @@
+#
+# Lance une commande sans argument
+# Résultat attendu : la commande s'exécute normalement
+#
+ls

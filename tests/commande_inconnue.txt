@@ -1,4 +1,7 @@
 #
-# Essaie de lancer une commande qui n'existe pas
+# Essaie de lancer une commande qui n'existe pas parmi des commandes correctes
+# Résultat attendu : erreur "command not found" pour la commande inexistante, les deux autres s'exécutent correctement
 #
+echo Bonjour
 aeiouy
+echo Au revoir

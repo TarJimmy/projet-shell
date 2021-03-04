@@ -1,0 +1,5 @@
+#
+# Exécute une commande qui prend un fichier comme argument de sortie, avec >
+# Résultat attendu : le contenu du dossier courant est écrit dans sortie_test.txt
+#
+ls -la . > sortie_test.txt

@@ -1,0 +1,7 @@
+#
+# Lance plusieurs commandes, dont une renvoie une erreur
+# Résultat attendu : la commande fautive affiche une erreur, les autres s'exécutent normalement
+#
+echo Bonjour, ceci n'est pas un exercice
+ls dossier_inexistant
+echo Salut, et merci pour le poisson

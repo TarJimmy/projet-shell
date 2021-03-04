@@ -1,0 +1,5 @@
+#
+# Teste la commande qui termine le shell (commande interne)
+# Résultat attendu : le shell se termine normalement
+#
+quit

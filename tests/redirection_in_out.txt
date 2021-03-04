@@ -1,0 +1,5 @@
+#
+# Exécute une commande qui prend à la fois une entrée et une sortie
+# Résultat attendu : le contenu du présent test est copié dans sortie_test.txt
+#
+cat < ./tests/redirection_in_out.txt > sortie_test.txt

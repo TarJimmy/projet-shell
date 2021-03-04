@@ -1,0 +1,5 @@
+#
+# Exécute une commande utilisant un pipe simple
+# Résultat attendu : le résultat de ls n'est pas affiché, mais est envoyé à grep, qui affiche les occurences de "test"
+#
+ls . | grep test
