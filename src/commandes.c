@@ -105,12 +105,12 @@ void executeOneCmd(struct cmdline *l, char** cmd, char* in, char* out) {
         if (in != NULL) {
             if ((fd[0] = open(in, O_RDONLY)) == -1) {
                 afficheError(errno, in);
-                return;
+                exit(EXIT_FAILURE);
             };
 
             if (dup2(fd[0], STDIN_FILENO) == -1) {
                 afficheError(errno, in);
-                return;
+                exit(EXIT_FAILURE);
             }
         }
 
@@ -118,13 +118,13 @@ void executeOneCmd(struct cmdline *l, char** cmd, char* in, char* out) {
             if ((fd[1] = open(out, O_WRONLY | O_CREAT, S_IRWXU)) == -1) {
                 //errno pour afficher celui ci au cas ou les fonctions suivantes déclenchent aussi une erreur
                 afficheError(errno, out);
-                return;
+                exit(EXIT_FAILURE);
             }
             
             if (dup2(fd[1], STDOUT_FILENO) == -1) {
                 //Sauvegarde errno pour afficher celui ci au cas ou les fonctions suivantes déclenchent aussi une erreur
                 afficheError(errno, out);
-                return;
+                exit(EXIT_FAILURE);
             }
         }
         // env est un groupe de variables d’environnement, on n’y inclut que le PATH
