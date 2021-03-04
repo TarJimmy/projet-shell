@@ -5,4 +5,4 @@
 echo aaaa > temp_test.txt
 chmod -r temp_test.txt
 cat < temp_test.txt
-rm temp_test.txt
+rm -f temp_test.txt

@@ -1,8 +1,28 @@
 # Écrire dans ce fichier les tests qui sont passés par le programme, et ceux qui échouent.
-# 
+
 # Tests réussis :
-# 
-# 
+#     Simples
+#         arguments
+#         commande_simple
+#         plusieurs_commandes
+#         quit
+#         zombi
+#     Erreurs
+#         erreurs
+#     Redirections
+#         redirection_in
+#         redirection_out
+#         redirection_in_out
+
+
 # Tests échoués :
-# 
-# 
+#     Erreurs
+#         commande_inconnue affiche (null) au lieu d’afficher le nom de la commande qui a échoué
+#         ecriture_impossible deux shells semblent se lancer après l’erreur
+#         lecture_impossible idem que ecriture_impossible
+
+
+# Tests pas encore essayés :
+#     Redirections
+#         pipe_simple pas encore implémenté
+#         pipe redirection pas encore implémenté

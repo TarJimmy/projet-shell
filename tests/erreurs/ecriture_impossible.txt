@@ -5,4 +5,4 @@
 touch temp_test.txt
 chmod -w temp_test.txt
 echo aaa > temp_test.txt
-rm temp_test.txt
+rm -f temp_test.txt

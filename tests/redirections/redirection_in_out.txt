@@ -3,4 +3,6 @@
 # Résultat attendu : le contenu du présent test est copié dans sortie_test.txt
 #
 cat < ./tests/redirections/redirection_in_out.txt > sortie_test.txt
-rm sortie_test.txt
+ls sortie_test.txt
+cat sortie_test.txt
+rm -f sortie_test.txt
