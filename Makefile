@@ -34,4 +34,4 @@ shell: $(OBJS)
 	rm -f */*.o
 
 clean:
-	rm -f shell *.o
+	rm -f shell *.o *.txt

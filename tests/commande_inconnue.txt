@@ -1,0 +1,4 @@
+#
+# Essaie de lancer une commande qui n'existe pas
+#
+aeiouy
