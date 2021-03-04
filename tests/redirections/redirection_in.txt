@@ -2,4 +2,4 @@
 # Lance une commande qui prend un fichier comme entrée, avec <
 # Résultat attendu : cat affiche correctement le contenu du test
 #
-cat < ./tests/redirection_in.txt
+cat < ./tests/redirections/redirection_in.txt

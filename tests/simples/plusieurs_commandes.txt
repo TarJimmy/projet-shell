@@ -1,5 +1,6 @@
 #
 # Lance une succession de commandes simples
+# Résultat attendu : les commandes s’exécutent normalement
 #
 ls
 echo Bonjour

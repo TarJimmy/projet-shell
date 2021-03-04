@@ -1,5 +1,0 @@
-#
-# Lance une commande utilisant à la fois un pipe et une redirection
-#
-#
-cat < ./tests/pipe_redirection.txt | grep pipe

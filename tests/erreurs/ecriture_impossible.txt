@@ -1,0 +1,8 @@
+#
+# Essaie d’écrire dans un fichier sans en avoir le droit
+# Résultat attendu : la commande qui doit écrire échoue et renvoie une erreur
+#
+touch temp_test.txt
+chmod -w temp_test.txt
+echo aaa > temp_test.txt
+rm temp_test.txt

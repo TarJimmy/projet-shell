@@ -1,0 +1,8 @@
+#
+# Tente de lancer une commande avec un fichier en entrée, mais ce fichier ne peut pas être écrit
+# Résultat attendu : la commande échoue et renvoie une erreur
+#
+echo aaaa > temp_test.txt
+chmod -r temp_test.txt
+cat < temp_test.txt
+rm temp_test.txt

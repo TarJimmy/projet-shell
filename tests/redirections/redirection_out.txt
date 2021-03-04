@@ -3,3 +3,4 @@
 # Résultat attendu : le contenu du dossier courant est écrit dans sortie_test.txt
 #
 ls -la . > sortie_test.txt
+rm sortie_test.txt

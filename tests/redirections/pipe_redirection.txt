@@ -1,0 +1,5 @@
+#
+# Lance une commande utilisant à la fois un pipe et une redirection
+# Résultat attendu : grep affiche les occurences du mot "pipe" dans le présent fichier
+#
+cat < ./tests/redirections/pipe_redirection.txt | grep pipe
