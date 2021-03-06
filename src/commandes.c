@@ -64,76 +64,95 @@ int tailleCmd(struct cmdline *l) {
     return taille;
 }
 
-// TODO : gestion des pipes et redirections
-// cette première version n’exécute que les commandes simples
+// réalise les commandes, en gérant les redirections et partage de données entre processus
 void executeCmd(struct cmdline *l) { 
-    char* in = NULL;
-    char* out = NULL;
+    int pipefd[2];
+    int save_dp[2];
+    // On sauvegarde l'entrée et la sortie standart courante
+    save_dp[0] = dup(STDIN_FILENO);
+    save_dp[1] = dup(STDOUT_FILENO);
     for (int i = 0; i < tailleCmd(l); i++) {
         #ifdef DEBUG
         printf("Number : i %d\n", i);
         printf("Number : i==0 %d\n", i==0);
-        printf("Number : tailleCmd(l) -1 : %d\n", (tailleCmd(l) - 1));
+        printf("Number : tailleCmd(l) : %d\n", (tailleCmd(l)));
         printf("l->in : %s\n", l->in);
         printf("l->out : %s\n", l->out);
         #endif
-        if (i == 0) {
-            in = l->in;
-        } 
-        if (i == tailleCmd(l) - 1) {
-            out = l->out;
+        if (executeOneCmd(l,  pipefd, i) == EXIT_FAILURE) {
+            break;
         }
-        executeOneCmd(l, l->seq[i], in, out);
     }
+    // On replace l'entrée et le sortie d'origine
+    dup2(save_dp[0], STDIN_FILENO);
+    dup2(save_dp[1], STDOUT_FILENO);
     return;
 }
 
 /**
- * TODO : version basique ne gérant ni pipes, ni redirections, ni tâches en arrière-plan
- * cmd correspond à la séquence d’arguments, par exemple ["ls", "-l"]
- * cmd[0] est le nom de la commande, par exemple "ls"
- * fd est le descripteur de fichier où l'on doit travailler dessus
+ * pipefd est le tableau que l'on utilise pour créer la pipe
+ * index est le numéro de commande à réaliser
 **/ 
-void executeOneCmd(struct cmdline *l, char** cmd, char* in, char* out) {
+int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
+    //Initialise la pipe entre le ère et le fils
+    if (pipe(pipefd) == -1) {
+            afficheError(errno, "pipe");
+    }   
     
-    // vérification de la validité de l’indice
     pid_t pid_fils = Fork();
 
     // partie du fils
     if (pid_fils == 0) {
         int fd[2];
-        if (in != NULL) {
-            if ((fd[0] = open(in, O_RDONLY)) == -1) {
-                afficheError(errno, in);
+        //Si on est 1er on regarde s'il n'a pas un fichier en entrée
+        if (index == 0 && l->in) {
+            #ifdef DEBUG
+            printf("-----index == 0 && l->in-----");
+            #endif
+            if ((fd[0] = open(l->in, O_RDONLY)) == -1) {
+                afficheError(errno, l->in);
                 exit(EXIT_FAILURE);
-            };
+            }
 
             if (dup2(fd[0], STDIN_FILENO) == -1) {
-                afficheError(errno, in);
+                afficheError(errno, l->in);
                 exit(EXIT_FAILURE);
             }
         }
+        //On ferme la lecture du pipe car on ne l'utilise pas dans le fils
+        if(close(pipefd[0]) < 0 ) { 
+            afficheError(errno, *l->seq[index]);
+            exit(EXIT_FAILURE);
+        }
 
-        if (out != NULL) {
-            if ((fd[1] = open(out, O_WRONLY | O_CREAT, S_IRWXU)) == -1) {
-                //errno pour afficher celui ci au cas ou les fonctions suivantes déclenchent aussi une erreur
-                afficheError(errno, out);
+        /**
+         * Si on est le dernier, on modifie la sortie de la commande si elle est précisé
+         * Si on n'est pas le dernier, on écris dans la sortie de la pipe
+         * Si aucune de ces conditions n'est réalisé, le programme écrira la réponse sur la sortie standard
+        **/ 
+        if ((index == tailleCmd(l) - 1) && l->out) {
+            if ((fd[1] = open(l->out, O_WRONLY | O_CREAT, S_IRWXU)) == -1) {
+                afficheError(errno, l->out);
                 exit(EXIT_FAILURE);
             }
             
             if (dup2(fd[1], STDOUT_FILENO) == -1) {
-                //Sauvegarde errno pour afficher celui ci au cas ou les fonctions suivantes déclenchent aussi une erreur
-                afficheError(errno, out);
+                afficheError(errno, l->out);
                 exit(EXIT_FAILURE);
             }
-        }
-        // env est un groupe de variables d’environnement, on n’y inclut que le PATH
+        } else if (index < tailleCmd(l) - 1) {
+            //On place la sortie sur le write pipe
+            if (dup2(pipefd[1], STDOUT_FILENO) < 0) {
+                afficheError(errno, *l->seq[index]);
+                exit(EXIT_FAILURE);
+            }
+        } 
+
         #ifdef DEBUG
         printf("Execution de EXECVE dans executeOneCmd, pid : %d\n", getpid());
         #endif
-
-       //lie la sortie standard à travers le second pipe à l’entrée standard du processus fils.
-        if(execvp(cmd[0], cmd) < 0) {
+        // On execute la commande
+        if(execvp(l->seq[index][0], l->seq[index]) < 0) {
             #ifdef DEBUG
             printf("Return with error");
             #endif
@@ -143,21 +162,25 @@ void executeOneCmd(struct cmdline *l, char** cmd, char* in, char* out) {
         // point théoriquement jamais atteint puisque execvp « remplace » le processus (utile pour supprimer le warning)
         exit(EXIT_SUCCESS);
 
-    } else { // father
+    } else { // père
         int status;
         
         #ifdef DEBUG
         printf("Wait Pid dans executeCmdOne : %d\n", pid_fils);
         printf("Return father");
         #endif
+        //On ferme l'entrée pour écrire et on replace la lecture de la pipe sur l'entrée standart standard
+        close(pipefd[1]);
+        dup2(pipefd[0], STDIN_FILENO);
         // le père attend la fin du fils qui exécute la commande
         Waitpid(-1, &status, 0);
         // code renvoyé dépend du code de terminaison du fils
         if (WIFEXITED(status)) {
-            return;
+            return EXIT_SUCCESS;
         } else {
-            afficheError(ERR_COMMANDE, out);
-            return;
+            // Si la commande courante a eu un soucis, l'erreur est affiché et on précise que le programme a eu une erreur
+            afficheError(ERR_COMMANDE, *l->seq[index]);
+            return EXIT_FAILURE;
         }
     }
 }

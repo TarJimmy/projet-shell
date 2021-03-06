@@ -42,10 +42,10 @@ int tailleCmd(struct cmdline *l);
 void executeCmd(struct cmdline *l);
 
 /*
-* Entrée : un groupe de commandes sous la forme struct cmdline*, un entier
+* Entrée : un groupe de commandes sous la forme struct cmdline*, le tableau que l'on utilisera pour les pipes, l'index de la commande à executer
 * Sortie : OK_EXEC si la commande s’est correctement exécutée, ERREUR_EXEC si l’exécution a causé une erreur (à améliorer)
 * Effet de bord : exécute la commande i de la structure l si l->seq[i] existe
 */
-void executeOneCmd(struct cmdline *l, char** cmd, char* in, char* out);
+int executeOneCmd(struct cmdline *l, int pipefd[], int index);
 
 #endif
