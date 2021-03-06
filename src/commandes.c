@@ -96,7 +96,8 @@ void executeCmd(struct cmdline *l) {
 int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
     //Initialise la pipe entre le ère et le fils
     if (pipe(pipefd) == -1) {
-            afficheError(errno, "pipe");
+        afficheError(errno, "pipe");
+        return EXIT_FAILURE;
     }   
     
     pid_t pid_fils = Fork();
@@ -111,18 +112,18 @@ int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
             #endif
             if ((fd[0] = open(l->in, O_RDONLY)) == -1) {
                 afficheError(errno, l->in);
-                exit(EXIT_FAILURE);
+                kill(getpid(), SIGSEGV);
             }
 
             if (dup2(fd[0], STDIN_FILENO) == -1) {
                 afficheError(errno, l->in);
-                exit(EXIT_FAILURE);
+                kill(getpid(), SIGSEGV);
             }
         }
         //On ferme la lecture du pipe car on ne l'utilise pas dans le fils
         if(close(pipefd[0]) < 0 ) { 
             afficheError(errno, *l->seq[index]);
-            exit(EXIT_FAILURE);
+            kill(getpid(), SIGSEGV);
         }
 
         /**
@@ -133,18 +134,18 @@ int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
         if ((index == tailleCmd(l) - 1) && l->out) {
             if ((fd[1] = open(l->out, O_WRONLY | O_CREAT, S_IRWXU)) == -1) {
                 afficheError(errno, l->out);
-                exit(EXIT_FAILURE);
+                kill(getpid(), SIGSEGV);
             }
             
             if (dup2(fd[1], STDOUT_FILENO) == -1) {
                 afficheError(errno, l->out);
-                exit(EXIT_FAILURE);
+                kill(getpid(), SIGSEGV);
             }
         } else if (index < tailleCmd(l) - 1) {
             //On place la sortie sur le write pipe
             if (dup2(pipefd[1], STDOUT_FILENO) < 0) {
                 afficheError(errno, *l->seq[index]);
-                exit(EXIT_FAILURE);
+                kill(getpid(), SIGSEGV);
             }
         } 
 
