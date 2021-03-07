@@ -1,0 +1,7 @@
+#
+# Lance des commandes en arrière-plan, mais leur donne des redirections en plus
+# Résultat attendu : le shell n’attend pas la fin de ces commandes, mais elles écrivent/lisent correctement les fichiers, et son récupérées à la fin
+#
+ls > test.txt &
+cat < test.txt &
+ps

@@ -11,18 +11,20 @@
 #         erreurs
 #         ecriture_impossible
 #         lecture_impossible
+#         commande_inconnue
 #     Redirections
 #         redirection_in
 #         redirection_out
 #         redirection_in_out
+#         pipe_simple
+#         pipe_redirection
+#     Background
+#         background_redirection
+#         simple_background
+#         background_pipe
 
 
 # Tests échoués :
-#     Erreurs
-#         commande_inconnue affiche (null) au lieu d’afficher le nom de la commande qui a échoué
 
 
 # Tests pas encore essayés :
-#     Redirections
-#         pipe_simple pas encore implémenté
-#         pipe redirection pas encore implémenté

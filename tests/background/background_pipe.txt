@@ -1,0 +1,6 @@
+#
+# Combine arrièe-plan et pipes
+# Résultat attendu : exécution correcte, ls est récupéré après sa terminaison
+#
+ls & | grep test
+ps
