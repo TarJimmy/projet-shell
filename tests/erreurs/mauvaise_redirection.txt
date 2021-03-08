@@ -1,0 +1,10 @@
+#
+# Tente des commandes dont les redirections sont impossibles
+# Résultat attendu : les commandes échouent et affichent une erreur
+#
+echo Bonjour, cette commande est valide
+ls |
+< ./tests/erreurs/mauvaise_redirection.txt
+echo aaa >
+| grep pipe
+echo Une autre commande valide en fin de test, pour voir si les erreurs n’ont pas tout cassé

@@ -10,6 +10,17 @@
 
 #define CHAR_STOP_SHELL "quit"
 
+/* Handler pour SIGCHLD */
+void child_handler(int sig) {
+	int status;
+	// le père récupère un fils terminé (-1), mais ne se bloque pas en l’attendant (WNOHANG)
+	// il récupère aussi les fils « perdus » en demandant les informations des fils qui ne sont pas suivis
+	waitpid(-1, &status, WNOHANG | WUNTRACED);
+
+	// hélas, le handler ne peut pas renvoyer d’informations d’erreurs à ExecuteCmd… Cela peut poser souci dans une chaîne de commandes…
+	return;
+}
+
 /**
  * Mode Debug  : make DEBUG=0
  * Mode normal : make 
@@ -18,6 +29,10 @@ int main() {
 	#ifdef DEBUG
 	printf("-----MODE DEBUG-----\n");
 	#endif
+
+	// installation du handler pour SIGCHLD
+	Signal(SIGCHLD, child_handler);
+
 	while (1) {
 		struct cmdline *l;
 		fflush(stdout);

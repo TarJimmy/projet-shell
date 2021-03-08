@@ -99,7 +99,15 @@ int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
     if (pipe(pipefd) == -1) {
         afficheError(errno, "pipe");
         return EXIT_FAILURE;
-    }   
+    }
+
+    #ifdef DEBUG
+    if (l->background[index] == 0) {
+        printf("Commande à lancer au premier plan\n");
+    } else {
+        printf("Commande à lancer en arrière plan\n");
+    }
+    #endif
     
     pid_t pid_fils = Fork();
 
@@ -158,8 +166,10 @@ int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
         // On execute la commande
         if(execvp(l->seq[index][0], l->seq[index]) < 0) {
             #ifdef DEBUG
-            printf("Return with error");
+            printf("Return with error\n");
             #endif
+            // Si la commande courante a eu un soucis, l'erreur est affiché et on précise que le programme a eu une erreur
+            afficheError(ERR_COMMANDE, *l->seq[index]);
             //On tue le fils via un kill pour que le waitpid du père nous signal que le fils ne s'est pas terminé normalement
             kill(getpid(), SIGSEGV);
         }
@@ -172,20 +182,27 @@ int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
         
         #ifdef DEBUG
         printf("Wait Pid dans executeCmdOne : %d\n", pid_fils);
-        printf("Return father");
+        printf("Return to father\n");
         #endif
+
         //On ferme l'entrée pour écrire et on replace la lecture de la pipe sur l'entrée standart standard
         close(pipefd[1]);
         dup2(pipefd[0], STDIN_FILENO);
-        // le père attend la fin du fils qui exécute la commande
-        Waitpid(-1, &status, 0);
-        // code renvoyé dépend du code de terminaison du fils
-        if (WIFEXITED(status)) {
-            return EXIT_SUCCESS;
-        } else {
-            // Si la commande courante a eu un soucis, l'erreur est affiché et on précise que le programme a eu une erreur
-            afficheError(ERR_COMMANDE, *l->seq[index]);
-            return EXIT_FAILURE;
+
+        // si la commande courante est à lancer en premier plan
+        if (l->background[index] == 0) {
+            // le père attend la fin du fils qui exécute la commande
+            Waitpid(-1, &status, 0);
+            // code renvoyé dépend du code de terminaison du fils
+            if (WIFEXITED(status)) {
+                return EXIT_SUCCESS;
+            } else {
+                return EXIT_FAILURE;
+            }
         }
+        // si la commande courante est à lancer en arrière-plan, le père n’attend pas sa terminaison
+        // cependant, cela veut dire qu’il ne peut pas renvoyer s’il y a eu une erreur…
+        return EXIT_SUCCESS;
+        
     }
 }

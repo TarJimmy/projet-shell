@@ -17,6 +17,7 @@ struct cmdline {
 	char *in;	/* If not null : name of file for input redirection. */
 	char *out;	/* If not null : name of file for output redirection. */
 	char ***seq;	/* See comment below */
+	int * background; /* Pour seq[i], si background[i] == 1 alors la commande doit se lancer en arrière-plan, si background[i] == 0 elle se lance au premier plan */
 };
 
 /* Field seq of struct cmdline :

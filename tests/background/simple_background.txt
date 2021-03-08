@@ -1,0 +1,6 @@
+#
+# Lance une commande en arrière-plan
+# Résultat attendu : la commande s’exécute en arrière-plan, puis le processus est récupéré par le père lors de sa terminaison
+#
+ls &
+ps

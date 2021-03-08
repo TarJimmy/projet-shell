@@ -1,0 +1,44 @@
+echo "Test de commande simples"
+ls 
+touch toto.txt
+
+echo "Redirection d'entré et de sortie:"
+ls > out.txt
+cat < out.txt
+grep Makefile < out.txt > outGrep.txt
+cat outGrep.txt
+
+echo "Gestion des erreurs:"
+chmod -w toto.txt
+ls > toto.txt
+uneCommandNotFound
+
+echo "Sequence de commande:"
+echo "Simple + 2:"
+ls
+ls | grep Makefile
+echo "n commande"
+ls -l | head -n 5 | grep Makefile | wc 
+echo "Redirection de sortie:"
+cat < out.txt | grep Makefile | wc > out2.txt
+cat out2.txt
+echo "Erreurs":
+cat < out.txt | grep Makefile | wc > toto.txt
+out.txt | uneCommandNotFound Makefile | wc
+
+echo "Gestion du background:"
+echo "Simple:"
+ls &
+ps
+
+echo "Sequence:"
+ls & | grep test
+ps
+
+echo "Redirection:"
+ls > test.txt &
+cat < test.txt &
+ps
+
+echo "Clean demo:"
+rm -rf test.txt out* toto.txt

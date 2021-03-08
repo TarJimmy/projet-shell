@@ -147,6 +147,7 @@ static void freecmd(struct cmdline *s)
 	if (s->in) free(s->in);
 	if (s->out) free(s->out);
 	if (s->seq) freeseq(s->seq);
+	if (s->background) free(s->background);
 }
 
 
@@ -161,6 +162,7 @@ struct cmdline *readcmd(void)
 	char **cmd;
 	char ***seq;
 	size_t cmd_len, seq_len;
+	int * bg;
 
 	line = readline();
 	if (line == NULL) {
@@ -177,6 +179,7 @@ struct cmdline *readcmd(void)
 	seq = xmalloc(sizeof(char **));
 	seq[0] = 0;
 	seq_len = 0;
+	bg = xmalloc(sizeof(int));
 
 	words = split_in_words(line);
 	free(line);
@@ -189,6 +192,7 @@ struct cmdline *readcmd(void)
 	s->in = 0;
 	s->out = 0;
 	s->seq = 0;
+	s->background = 0;
 
 	i = 0;
 	while ((w = words[i++]) != 0) {
@@ -232,8 +236,22 @@ struct cmdline *readcmd(void)
 			cmd[0] = 0;
 			cmd_len = 0;
 			break;
+		case '&':
+			// si on lit un & en début de commande
+			if (cmd_len == 0) {
+				s->err = "misplaced ampersand";
+				goto error;
+			}
+
+			// le & n’est pas ajouté aux arguments, on met juste le flag background correspondant à cette commande à 1
+			// par conséquent, '&' est valide même s’il apparaît plusieurs fois (ls & &)
+			bg = xrealloc(bg, (i + 1) * sizeof(int));
+			bg[seq_len] = 1;
+			break;
 		default:
 			cmd = xrealloc(cmd, (cmd_len + 2) * sizeof(char *));
+			bg = xrealloc(bg, (cmd_len + 1) * sizeof(int));
+			bg[seq_len] = 0;
 			cmd[cmd_len++] = w;
 			cmd[cmd_len] = 0;
 		}
@@ -251,6 +269,7 @@ struct cmdline *readcmd(void)
 		free(cmd);
 	free(words);
 	s->seq = seq;
+	s->background = bg;
 	return s;
 error:
 	while ((w = words[i++]) != 0) {
