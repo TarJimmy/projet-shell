@@ -71,6 +71,7 @@ void executeCmd(struct cmdline *l) {
     // On sauvegarde l'entrée et la sortie standart courante
     save_dp[0] = dup(STDIN_FILENO);
     save_dp[1] = dup(STDOUT_FILENO);
+    // On execute sequentiellement chaque commande
     for (int i = 0; i < tailleCmd(l); i++) {
         #ifdef DEBUG
         printf("Number : i %d\n", i);
@@ -94,7 +95,7 @@ void executeCmd(struct cmdline *l) {
  * index est le numéro de commande à réaliser
 **/ 
 int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
-    //Initialise la pipe entre le ère et le fils
+    //Initialise la pipe entre le père et le fils
     if (pipe(pipefd) == -1) {
         afficheError(errno, "pipe");
         return EXIT_FAILURE;
@@ -104,6 +105,13 @@ int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
 
     // partie du fils
     if (pid_fils == 0) {
+
+        //On ferme la lecture du pipe car on ne l'utilise pas dans le fils
+        if(close(pipefd[0]) < 0 ) { 
+            afficheError(errno, *l->seq[index]);
+            kill(getpid(), SIGSEGV);
+        }
+        // Variable utilisé pour les redirections d'entrée/sortie
         int fd[2];
         //Si on est 1er on regarde s'il n'a pas un fichier en entrée
         if (index == 0 && l->in) {
@@ -120,15 +128,10 @@ int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
                 kill(getpid(), SIGSEGV);
             }
         }
-        //On ferme la lecture du pipe car on ne l'utilise pas dans le fils
-        if(close(pipefd[0]) < 0 ) { 
-            afficheError(errno, *l->seq[index]);
-            kill(getpid(), SIGSEGV);
-        }
 
         /**
          * Si on est le dernier, on modifie la sortie de la commande si elle est précisé
-         * Si on n'est pas le dernier, on écris dans la sortie de la pipe
+         * Si on n'est pas le dernier, on écrit dans la sortie de la pipe
          * Si aucune de ces conditions n'est réalisé, le programme écrira la réponse sur la sortie standard
         **/ 
         if ((index == tailleCmd(l) - 1) && l->out) {
@@ -157,6 +160,7 @@ int executeOneCmd(struct cmdline *l, int pipefd[], int index) {
             #ifdef DEBUG
             printf("Return with error");
             #endif
+            //On tue le fils via un kill pour que le waitpid du père nous signal que le fils ne s'est pas terminé normalement
             kill(getpid(), SIGSEGV);
         }
 

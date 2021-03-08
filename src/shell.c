@@ -45,7 +45,7 @@ int main() {
 			exit(0);
 		}
 
-		/* Exécute la commande (simple pour l’instant) */
+		/* Exécute la ligne de commande */
 		executeCmd(l);
 		
 		/* [DEBUG] Display in < and out > arguments and Display each command of the pipe */

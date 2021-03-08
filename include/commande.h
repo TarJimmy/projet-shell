@@ -37,14 +37,14 @@ int tailleCmd(struct cmdline *l);
 /*
 * Entrée : un groupe de commandes sous la forme struct cmdline*
 * Sortie :  
-* Effet de bord : exécute les commandes, écrit l'erreur s'il y en a une
+* Effet de bord : exécute les commandes, écrit l'erreur s'il y en a une, stop la suite de commande si une erreur est survenu
 */
 void executeCmd(struct cmdline *l);
 
 /*
 * Entrée : un groupe de commandes sous la forme struct cmdline*, le tableau que l'on utilisera pour les pipes, l'index de la commande à executer
 * Sortie : OK_EXEC si la commande s’est correctement exécutée, ERREUR_EXEC si l’exécution a causé une erreur (à améliorer)
-* Effet de bord : exécute la commande i de la structure l si l->seq[i] existe
+* Effet de bord : exécute la commande i de la structure l si l->seq[i] existe, sinon affiche son message d'erreur
 */
 int executeOneCmd(struct cmdline *l, int pipefd[], int index);
 
